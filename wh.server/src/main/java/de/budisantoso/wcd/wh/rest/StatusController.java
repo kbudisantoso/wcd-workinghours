@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import de.budisantoso.wcd.wh.model.Status;
 
 @RestController
-public class WcdWorkingHoursController {
+@RequestMapping("/wh/status")
+public class StatusController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WcdWorkingHoursController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StatusController.class);
 
 	private final AtomicLong counter = new AtomicLong();
 
-	@RequestMapping(method = RequestMethod.GET, value = "/{status}")
+	@RequestMapping(method = RequestMethod.GET, value = "/status")
 	public Status status(@RequestParam(value = "message", defaultValue = "green") String message) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Processing request for status with message '{}'.", message);

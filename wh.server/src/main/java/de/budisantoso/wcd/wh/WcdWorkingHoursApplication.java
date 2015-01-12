@@ -11,4 +11,5 @@ public class WcdWorkingHoursApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WcdWorkingHoursApplication.class, args);
 	}
+
 }
