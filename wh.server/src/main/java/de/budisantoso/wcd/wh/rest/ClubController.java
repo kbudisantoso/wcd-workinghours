@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.budisantoso.wcd.wh.dto.ClubDTO;
+import de.budisantoso.wcd.wh.exception.ClubNotFoundException;
 import de.budisantoso.wcd.wh.persistence.ClubService;
-import de.budisantoso.wcd.wh.persistence.exception.ClubNotFoundException;
 
 @RestController
 @RequestMapping("/wh/club")
@@ -32,12 +32,12 @@ public class ClubController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	ClubDTO create(@RequestBody @Valid ClubDTO clubEntry) {
+	public ClubDTO create(@RequestBody @Valid ClubDTO clubEntry) {
 		return service.create(clubEntry);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	ClubDTO delete(@PathVariable("id") String id) {
+	public ClubDTO delete(@PathVariable("id") String id) {
 		return service.delete(id);
 	}
 
@@ -50,7 +50,7 @@ public class ClubController {
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
-	ClubDTO findById(@PathVariable("id") String id) {
+	public ClubDTO findById(@PathVariable("id") String id) {
 		return service.findById(id);
 	}
 
@@ -63,7 +63,7 @@ public class ClubController {
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.PUT)
-	ClubDTO update(@PathVariable("id") String id, @RequestBody @Valid ClubDTO clubEntry) {
+	public ClubDTO update(@PathVariable("id") String id, @RequestBody @Valid ClubDTO clubEntry) {
 		clubEntry.setId(id);
 		return service.update(clubEntry);
 	}
@@ -71,7 +71,7 @@ public class ClubController {
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@SuppressWarnings("PMD")
-	public void handleTodoNotFound(ClubNotFoundException ex) {
+	public void handleClubNotFound(ClubNotFoundException ex) {
 	}
 
 }

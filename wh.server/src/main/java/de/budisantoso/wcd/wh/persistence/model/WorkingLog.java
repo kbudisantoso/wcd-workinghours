@@ -5,6 +5,8 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO Check and eventually remove SuppressWarnings
+@SuppressWarnings("PMD")
 public class WorkingLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;

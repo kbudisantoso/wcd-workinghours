@@ -113,6 +113,7 @@
 	<rule ref="rulesets/java/naming.xml">
 		<exclude name="ShortVariable"/>
 		<exclude name="LongVariable"/>
+		<exclude name="ShortClassName"/>
 	</rule>
 	
 	<!-- These rules deal with different optimizations that generally apply to best practices.  -->

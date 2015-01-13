@@ -15,7 +15,7 @@ public final class ClubDTO implements Serializable {
 	private String id;
 
 	@NotEmpty
-	@Size(max = ModelConstants.MAX_LENGTH_CLUB_NAME)
+	@Size(max = ModelConstants.CLUB_NAME_MAX_LENGTH)
 	private String name;
 
 	public String getId() {

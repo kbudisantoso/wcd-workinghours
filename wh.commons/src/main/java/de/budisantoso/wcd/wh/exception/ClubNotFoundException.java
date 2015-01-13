@@ -1,4 +1,4 @@
-package de.budisantoso.wcd.wh.persistence.exception;
+package de.budisantoso.wcd.wh.exception;
 
 public class ClubNotFoundException extends RuntimeException {
 

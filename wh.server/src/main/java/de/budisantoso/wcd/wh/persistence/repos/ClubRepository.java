@@ -6,6 +6,6 @@ import de.budisantoso.wcd.wh.persistence.model.Club;
 
 public interface ClubRepository extends MongoRepository<Club, String> {
 
-	public Club findByName(String name);
+	Club findByName(String name);
 
 }

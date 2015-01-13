@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan
 @EnableAutoConfiguration
+@SuppressWarnings("PMD")
 public class WcdWorkingHoursApplication {
 
 	public static void main(String[] args) {

@@ -6,16 +6,16 @@ import de.budisantoso.wcd.wh.dto.ClubDTO;
 
 public interface ClubService {
 
-	public abstract List<ClubDTO> findAll();
+	List<ClubDTO> findAll();
 
-	public abstract ClubDTO findById(String id);
+	ClubDTO findById(String id);
 
-	public abstract ClubDTO findByName(String name);
+	ClubDTO findByName(String name);
 
-	public abstract ClubDTO create(ClubDTO club);
+	ClubDTO create(ClubDTO clubDTO);
 
-	public abstract ClubDTO delete(String id);
+	ClubDTO delete(String id);
 
-	public abstract ClubDTO update(ClubDTO club);
+	ClubDTO update(ClubDTO clubDTO);
 
 }

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.budisantoso.wcd.wh.dto.ClubDTO;
+import de.budisantoso.wcd.wh.exception.ClubNotFoundException;
 import de.budisantoso.wcd.wh.persistence.ClubService;
-import de.budisantoso.wcd.wh.persistence.exception.ClubNotFoundException;
 import de.budisantoso.wcd.wh.persistence.model.Club;
 import de.budisantoso.wcd.wh.persistence.repos.ClubRepository;
 
@@ -31,11 +31,10 @@ public class ClubMongoDBService implements ClubService {
 		return clubDTOs;
 	}
 
-	private ClubDTO convertToDTO(Club club) {
+	protected ClubDTO convertToDTO(Club club) {
 		ClubDTO clubDTO = new ClubDTO();
 		clubDTO.setId(club.getId());
 		clubDTO.setName(club.getName());
-
 		return clubDTO;
 	}
 
@@ -44,7 +43,7 @@ public class ClubMongoDBService implements ClubService {
 		return convertToDTO(findClubById(id));
 	}
 
-	private Club findClubById(String id) {
+	protected Club findClubById(String id) {
 		Club result = repository.findOne(id);
 
 		if (null != result) {
@@ -56,12 +55,30 @@ public class ClubMongoDBService implements ClubService {
 
 	@Override
 	public ClubDTO findByName(String name) {
+		return convertToDTO(findClubByName(name));
+	}
+
+	protected Club findClubByName(String name) {
 		Club result = repository.findByName(name);
 
 		if (null != result) {
-			return convertToDTO(result);
+			return result;
 		} else {
 			throw new ClubNotFoundException("name", name);
+		}
+	}
+
+	protected Club findByIdOrName(String idOrName) {
+		Club result = repository.findOne(idOrName);
+		if (null != result) {
+			return result;
+		} else {
+			result = repository.findByName(idOrName);
+			if (null != result) {
+				return result;
+			} else {
+				throw new ClubNotFoundException("idOrName", idOrName);
+			}
 		}
 	}
 
@@ -78,10 +95,11 @@ public class ClubMongoDBService implements ClubService {
 	}
 
 	@Override
-	public ClubDTO update(ClubDTO club) {
-		Club updated = findClubById(club.getId());
-		updated.update(club.getName());
+	public ClubDTO update(ClubDTO clubDTO) {
+		Club updated = findClubById(clubDTO.getId());
+		updated.update(clubDTO.getName());
 		updated = repository.save(updated);
 		return convertToDTO(updated);
 	}
+
 }

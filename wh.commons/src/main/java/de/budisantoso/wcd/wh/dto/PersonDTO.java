@@ -18,7 +18,7 @@ public class PersonDTO implements Serializable {
 	private String id;
 
 	@NotEmpty
-	@Size(max = ModelConstants.MAX_LENGTH_CLUB_NAME)
+	@Size(max = ModelConstants.PERSON_NAME_MAX_LENGTH)
 	private String name;
 	
 	@NotNull

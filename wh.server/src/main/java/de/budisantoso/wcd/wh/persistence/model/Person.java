@@ -18,12 +18,16 @@ import de.budisantoso.wcd.wh.util.PreCondition;
 public class Person {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Person.class);
-	
+
 	@Id
 	private String id;
 
 	private String name;
 	private Set<Club> clubs = new HashSet<Club>();
+
+	@SuppressWarnings("PMD")
+	public Person() {
+	}
 
 	public Person(String name, Set<Club> clubs) {
 		checkName(name);
@@ -44,6 +48,7 @@ public class Person {
 	public String getId() {
 		return id;
 	}
+
 	public String getName() {
 		return name;
 	}
@@ -54,26 +59,28 @@ public class Person {
 
 	protected void setClubs(Set<Club> clubs) {
 		checkClubs(clubs);
-		clubs = new HashSet<Club>(clubs);
+		this.clubs.clear();
+		this.clubs.addAll(clubs);
 	}
 
-	public Person update(String name) {
+	public Person update(String name, Set<Club> clubs) {
 		checkName(name);
 		this.name = name;
+		setClubs(clubs);
 		return this;
 	}
 
 	public Person joinClub(Club club) {
 		checkClub(club);
-		this.clubs.add(club);
+		clubs.add(club);
 		return this;
 	}
 
 	private void checkName(String name) {
 		PreCondition.notNull(name, "Name cannot be null!");
 		PreCondition.notEmpty(name, "Name cannot be empty!");
-		PreCondition.isTrue(name.length() <= ModelConstants.MAX_LENGTH_PERSON_NAME,
-				"Name cannot be longer than %d characters", ModelConstants.MAX_LENGTH_PERSON_NAME);
+		PreCondition.isTrue(name.length() <= ModelConstants.PERSON_NAME_MAX_LENGTH,
+				"Name cannot be longer than %d characters", ModelConstants.PERSON_NAME_MAX_LENGTH);
 	}
 
 	private void checkClub(Club club) {

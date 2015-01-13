@@ -9,25 +9,30 @@ import de.budisantoso.wcd.wh.util.ModelConstants;
 import de.budisantoso.wcd.wh.util.PreCondition;
 
 @Document
-public class Club {
+public class Role {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Club.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Role.class);
 
 	@Id
 	private String id;
 
 	private String name;
 
+	private boolean allowedToManageClubs;
+	private boolean allowedToManagePersons;
+	private boolean allowedToAssignAccounts;
+
 	@SuppressWarnings("PMD")
-	public Club() {
+	public Role() {
 	}
 
-	public Club(String name) {
+	public Role(String name) {
 		checkName(name);
+
 		this.name = name;
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Created Club with name='{}'.", name);
+			LOGGER.debug("Created Role with name='{}'.", name);
 		}
 	}
 
@@ -39,7 +44,7 @@ public class Club {
 		return name;
 	}
 
-	public Club update(String name) {
+	public Role update(String name) {
 		checkName(name);
 		this.name = name;
 		return this;
@@ -48,13 +53,13 @@ public class Club {
 	private void checkName(String name) {
 		PreCondition.notNull(name, "Name cannot be null!");
 		PreCondition.notEmpty(name, "Name cannot be empty!");
-		PreCondition.isTrue(name.length() <= ModelConstants.CLUB_NAME_MAX_LENGTH, "Name cannot be longer than %d characters",
-				ModelConstants.CLUB_NAME_MAX_LENGTH);
+		PreCondition.isTrue(name.length() <= ModelConstants.ROLE_NAME_MAX_LENGTH,
+				"Name cannot be longer than %d characters", ModelConstants.ROLE_NAME_MAX_LENGTH);
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int prime = 37;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
@@ -68,7 +73,7 @@ public class Club {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Club other = (Club) obj;
+		Role other = (Role) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -79,7 +84,7 @@ public class Club {
 
 	@Override
 	public String toString() {
-		return "Club [id=" + id + ", name=" + name + "]";
+		return "Role [id=" + id + ", name=" + name + "]";
 	}
 
 }

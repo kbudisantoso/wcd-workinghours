@@ -11,7 +11,7 @@ public class Status implements Serializable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Status.class);
 
-	private long id = 0;
+	private long id;
 	private String message = "red";
 
 	public Status(long id, String message) {
