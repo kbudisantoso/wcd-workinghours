@@ -1,23 +1,28 @@
 package de.budisantoso.wcd.wh.persistence.model;
 
-import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-public class WorkingEvent implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class WorkingEvent {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkingEvent.class);
 
-	private String name;
-	private Club club;
-	private Calendar dateAndTime;
+	@Id
+	private String id;
 
-	public WorkingEvent(String name, Club club, Calendar dateAndTime) {
+	private String name;
+	private Date dateAndTime;
+
+	@DBRef
+	private Club club;
+
+	public WorkingEvent(String name, Club club, Date dateAndTime) {
 		this.name = name;
 		this.club = club;
 		this.dateAndTime = dateAndTime;
@@ -25,6 +30,10 @@ public class WorkingEvent implements Serializable {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Created WorkingEvent with name='{}', club={} and dateAndTime={}.", name, club, dateAndTime);
 		}
+	}
+
+	public WorkingEvent(String name, Club club, Calendar calendar) {
+		this(name, club, calendar.getTime());
 	}
 
 	public WorkingEvent(String name, Club club, int dayOfMonth, int month, int year, int hourOfDay, int minute) {
@@ -52,7 +61,7 @@ public class WorkingEvent implements Serializable {
 		return club;
 	}
 
-	public Calendar getDateAndTime() {
+	public Date getDateAndTime() {
 		return dateAndTime;
 	}
 
