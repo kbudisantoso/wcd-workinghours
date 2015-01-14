@@ -18,8 +18,12 @@ public class Club {
 
 	private String name;
 
-	@SuppressWarnings("PMD")
-	public Club() {
+	@SuppressWarnings("unused")
+	private Club() {
+		// private default constructor for db
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Created Club by default constructor: name='{}'", name);
+		}
 	}
 
 	public Club(String name) {

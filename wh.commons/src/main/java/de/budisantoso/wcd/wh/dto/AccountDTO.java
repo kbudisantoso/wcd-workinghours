@@ -7,6 +7,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.budisantoso.wcd.wh.util.ModelConstants;
 
 public class AccountDTO implements Serializable {
@@ -58,7 +60,13 @@ public class AccountDTO implements Serializable {
 		this.person = person;
 	}
 
+	@JsonIgnore
 	public String getName() {
-		return null != person ? person.getName() : null;
+		if (null == person) {
+			person = new PersonDTO();
+			person.setName(username);
+		}
+		return person.getName();
 	}
+
 }

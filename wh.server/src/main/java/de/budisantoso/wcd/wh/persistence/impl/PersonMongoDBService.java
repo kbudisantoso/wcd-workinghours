@@ -41,7 +41,7 @@ public class PersonMongoDBService implements PersonService {
 		return personDTOs;
 	}
 
-	private PersonDTO convertToDTO(Person person) {
+	protected PersonDTO convertToDTO(Person person) {
 		PersonDTO personDTO = new PersonDTO();
 		personDTO.setId(person.getId());
 		personDTO.setName(person.getName());
@@ -74,10 +74,14 @@ public class PersonMongoDBService implements PersonService {
 
 	@Override
 	public PersonDTO findByName(String name) {
+		return convertToDTO(findPersonByName(name));
+	}
+
+	protected Person findPersonByName(String name) {
 		Person result = repository.findByName(name);
 
 		if (null != result) {
-			return convertToDTO(result);
+			return result;
 		} else {
 			throw new PersonNotFoundException("name", name);
 		}
@@ -85,7 +89,11 @@ public class PersonMongoDBService implements PersonService {
 
 	@Override
 	public PersonDTO create(PersonDTO personDTO) {
-		return convertToDTO(repository.save(new Person(personDTO.getName(), findClubsByDTOs(personDTO.getClubs()))));
+		return convertToDTO(createPerson(personDTO));
+	}
+
+	public Person createPerson(PersonDTO personDTO) {
+		return repository.save(new Person(personDTO.getName(), findClubsByDTOs(personDTO.getClubs())));
 	}
 
 	@Override
@@ -115,4 +123,10 @@ public class PersonMongoDBService implements PersonService {
 		updated = repository.save(updated);
 		return convertToDTO(updated);
 	}
+
+	@Override
+	public List<PersonDTO> findAll() {
+		return convertToDTOs(repository.findAll());
+	}
+
 }

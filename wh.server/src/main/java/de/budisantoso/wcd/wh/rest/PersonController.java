@@ -77,6 +77,14 @@ public class PersonController {
 		return service.update(personEntry);
 	}
 
+	@RequestMapping(value = "list", method = RequestMethod.GET)
+	public List<PersonDTO> findAll() {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Find all persons.");
+		}
+		return service.findAll();
+	}
+
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@SuppressWarnings("PMD")

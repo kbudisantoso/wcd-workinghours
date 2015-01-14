@@ -9,6 +9,7 @@ import de.budisantoso.wcd.wh.util.ModelConstants;
 import de.budisantoso.wcd.wh.util.PreCondition;
 
 @Document
+@SuppressWarnings("PMD")
 public class Role {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Role.class);

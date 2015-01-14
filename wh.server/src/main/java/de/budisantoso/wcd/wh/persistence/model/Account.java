@@ -1,8 +1,10 @@
 package de.budisantoso.wcd.wh.persistence.model;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import de.budisantoso.wcd.wh.util.ModelConstants;
@@ -22,10 +24,16 @@ public class Account {
 
 	private String passwordHash;
 
+	@DBRef
 	private Person person;
 
-	@SuppressWarnings("PMD")
-	public Account() {
+	@SuppressWarnings("unused")
+	private Account() {
+		// private default constructor for db
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Created Account by default constructor: name='{}', passwordHash='{}', person={}", username,
+					passwordHash, person);
+		}
 	}
 
 	public Account(String username, String password) {
@@ -47,17 +55,32 @@ public class Account {
 		return username;
 	}
 
+	public Person getPerson() {
+		return person;
+	}
+
 	public boolean validatePassword(String password) {
 		return PASSWORD_UTIL.validatePassword(password, passwordHash);
 	}
 
-	public Account update(String username, String password) {
-		checkUsernameAndPassword(username, password);
-
-		this.username = username;
+	public Account updatePassword(String password) {
+		checkPassword(password);
 		this.passwordHash = PASSWORD_UTIL.createHash(password);
 
 		return this;
+	}
+
+	public Account assignPerson(Person person) {
+		checkPerson(person);
+		this.person = person;
+		return this;
+	}
+
+	private void checkPerson(Person person) {
+		PreCondition.notNull(person, "Person cannot be null!");
+		PreCondition
+				.isTrue(StringUtils.isNotEmpty(person.getId()),
+						"Person cannot be unmanaged. Person has no Id which indicates that it is not persisted yet; persist Person first.");
 	}
 
 	private void checkUsernameAndPassword(String username, String password) {
@@ -66,6 +89,10 @@ public class Account {
 		PreCondition.isTrue(username.length() <= ModelConstants.ACCOUNT_USERNAME_MAX_LENGTH,
 				"Username cannot be longer than %d characters.", ModelConstants.ACCOUNT_USERNAME_MAX_LENGTH);
 
+		checkPassword(password);
+	}
+
+	private void checkPassword(String password) {
 		PreCondition.notNull(password, "Name cannot be null!");
 		PreCondition.notEmpty(password, "Name cannot be empty!");
 		PreCondition.isTrue(password.length() >= ModelConstants.ACCOUNT_PASSWORD_MIN_LENGTH,
@@ -74,7 +101,6 @@ public class Account {
 				"Password cannot be longer than %d characters.", ModelConstants.ACCOUNT_PASSWORD_MAX_LENGTH);
 		PreCondition.isTrue(password.matches(ModelConstants.ACCOUNT_PASSWORD_PATTERN),
 				"Password must consist of at least one digit and one character.");
-
 	}
 
 	@Override

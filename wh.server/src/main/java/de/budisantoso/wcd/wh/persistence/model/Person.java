@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import de.budisantoso.wcd.wh.util.ModelConstants;
@@ -23,10 +24,16 @@ public class Person {
 	private String id;
 
 	private String name;
+
+	@DBRef
 	private Set<Club> clubs = new HashSet<Club>();
 
-	@SuppressWarnings("PMD")
-	public Person() {
+	@SuppressWarnings("unused")
+	private Person() {
+		// private default constructor for db
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Created Person by default constructor: name='{}'", name);
+		}
 	}
 
 	public Person(String name, Set<Club> clubs) {

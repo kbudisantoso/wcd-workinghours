@@ -38,12 +38,9 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Implementation of PBKDF2 salted password hashing.
  */
-@Component
 public class PasswordHashUtil {
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
 

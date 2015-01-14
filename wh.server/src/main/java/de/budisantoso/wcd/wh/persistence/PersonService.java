@@ -19,4 +19,7 @@ public interface PersonService {
 	List<PersonDTO> findByClubIdOrName(String clubIdOrName);
 
 	PersonDTO joinClub(String personId, String clubId);
+
+	List<PersonDTO> findAll();
+
 }
