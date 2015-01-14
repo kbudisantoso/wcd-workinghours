@@ -14,7 +14,7 @@ public interface AccountService {
 
 	AccountDTO findByUsername(String username);
 
-	AccountDTO updatePassword(String id, String password);
+	AccountDTO update(String id, AccountDTO accountEntry);
 
 	List<AccountDTO> findAll();
 

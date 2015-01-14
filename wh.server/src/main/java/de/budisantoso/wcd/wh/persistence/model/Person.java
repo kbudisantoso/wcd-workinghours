@@ -9,9 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import de.budisantoso.wcd.wh.dto.PersonDTO;
 import de.budisantoso.wcd.wh.util.ModelConstants;
 import de.budisantoso.wcd.wh.util.PreCondition;
 
@@ -23,6 +25,7 @@ public class Person {
 	@Id
 	private String id;
 
+	@Indexed(unique = true)
 	private String name;
 
 	@DBRef
@@ -50,6 +53,11 @@ public class Person {
 
 	public Person(String name) {
 		this(name, Collections.<Club> emptySet());
+	}
+
+	public Person(PersonDTO person) {
+		this(person.getName(), Club.createClubSet(person.getClubs()));
+		this.id = person.getId();
 	}
 
 	public String getId() {
@@ -107,8 +115,7 @@ public class Person {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((clubs == null) ? 0 : clubs.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -121,15 +128,10 @@ public class Person {
 		if (getClass() != obj.getClass())
 			return false;
 		Person other = (Person) obj;
-		if (clubs == null) {
-			if (other.clubs != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!clubs.equals(other.clubs))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

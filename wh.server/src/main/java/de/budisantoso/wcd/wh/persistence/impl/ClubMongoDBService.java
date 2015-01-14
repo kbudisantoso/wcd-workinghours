@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.budisantoso.wcd.wh.dto.ClubDTO;
+import de.budisantoso.wcd.wh.dto.PersonDTO;
 import de.budisantoso.wcd.wh.exception.ClubNotFoundException;
+import de.budisantoso.wcd.wh.exception.ReferencedClubDeleteException;
 import de.budisantoso.wcd.wh.persistence.ClubService;
 import de.budisantoso.wcd.wh.persistence.model.Club;
 import de.budisantoso.wcd.wh.persistence.repos.ClubRepository;
@@ -17,6 +19,12 @@ public class ClubMongoDBService implements ClubService {
 
 	@Autowired
 	private ClubRepository repository;
+
+	@Autowired
+	private WorkingEventMongoDBService workingEventService;
+
+	@Autowired
+	private PersonMongoDBService personService;
 
 	@Override
 	public List<ClubDTO> findAll() {
@@ -84,14 +92,27 @@ public class ClubMongoDBService implements ClubService {
 
 	@Override
 	public ClubDTO create(ClubDTO club) {
-		return convertToDTO(repository.save(new Club(club.getName())));
+		return convertToDTO(repository.save(new Club(club)));
 	}
 
 	@Override
 	public ClubDTO delete(String id) {
-		Club deleted = findClubById(id);
-		repository.delete(deleted);
-		return convertToDTO(deleted);
+		if (workingEventService.findByClubId(id).isEmpty()) {
+			Club deleted = findClubById(id);
+			removeClubFromPersons(deleted);
+			repository.delete(deleted);
+			return convertToDTO(deleted);
+		} else {
+			throw new ReferencedClubDeleteException("id", id);
+		}
+	}
+
+	private void removeClubFromPersons(Club deleted) {
+		List<PersonDTO> persons = personService.findByClubIdOrName(deleted.getId());
+		for (PersonDTO person : persons) {
+			person.getClubs().remove(deleted);
+			personService.update(person);
+		}
 	}
 
 	@Override

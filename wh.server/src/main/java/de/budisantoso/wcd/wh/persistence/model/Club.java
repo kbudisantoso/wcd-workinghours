@@ -1,10 +1,15 @@
 package de.budisantoso.wcd.wh.persistence.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import de.budisantoso.wcd.wh.dto.ClubDTO;
 import de.budisantoso.wcd.wh.util.ModelConstants;
 import de.budisantoso.wcd.wh.util.PreCondition;
 
@@ -16,6 +21,7 @@ public class Club {
 	@Id
 	private String id;
 
+	@Indexed(unique = true)
 	private String name;
 
 	@SuppressWarnings("unused")
@@ -33,6 +39,11 @@ public class Club {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Created Club with name='{}'.", name);
 		}
+	}
+
+	public Club(ClubDTO club) {
+		this(club.getName());
+		this.id = club.getId();
 	}
 
 	public String getId() {
@@ -56,11 +67,13 @@ public class Club {
 				ModelConstants.CLUB_NAME_MAX_LENGTH);
 	}
 
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -73,10 +86,10 @@ public class Club {
 		if (getClass() != obj.getClass())
 			return false;
 		Club other = (Club) obj;
-		if (name == null) {
-			if (other.name != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
@@ -84,6 +97,14 @@ public class Club {
 	@Override
 	public String toString() {
 		return "Club [id=" + id + ", name=" + name + "]";
+	}
+
+	public static Set<Club> createClubSet(Set<ClubDTO> clubDTOs) {
+		Set<Club> clubs = new HashSet<Club>(clubDTOs.size());
+		for (ClubDTO club : clubDTOs) {
+			clubs.add(new Club(club));
+		}
+		return clubs;
 	}
 
 }

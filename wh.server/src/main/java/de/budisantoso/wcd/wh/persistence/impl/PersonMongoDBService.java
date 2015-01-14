@@ -93,7 +93,7 @@ public class PersonMongoDBService implements PersonService {
 	}
 
 	public Person createPerson(PersonDTO personDTO) {
-		return repository.save(new Person(personDTO.getName(), findClubsByDTOs(personDTO.getClubs())));
+		return repository.save(new Person(personDTO));
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class PersonMongoDBService implements PersonService {
 	@Override
 	public PersonDTO update(PersonDTO personDTO) {
 		Person updated = findPersonById(personDTO.getId());
-		updated.update(personDTO.getName(), findClubsByDTOs(personDTO.getClubs()));
+		updated.update(personDTO.getName(), Club.createClubSet(personDTO.getClubs()));
 		updated = repository.save(updated);
 		return convertToDTO(updated);
 	}

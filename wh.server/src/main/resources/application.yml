@@ -1,8 +1,0 @@
-# EMBEDDED SERVER CONFIGURATION
-server:
-    port: 9696
-
-# SPRING MVC
-http:
-    mappers:
-        json-pretty-print: true

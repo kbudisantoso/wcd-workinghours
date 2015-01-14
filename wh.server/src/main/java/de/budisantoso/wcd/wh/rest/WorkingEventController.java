@@ -2,7 +2,6 @@ package de.budisantoso.wcd.wh.rest;
 
 import java.util.List;
 
-import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -18,51 +17,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.budisantoso.wcd.wh.dto.AccountDTO;
-import de.budisantoso.wcd.wh.persistence.AccountService;
+import de.budisantoso.wcd.wh.dto.WorkingEventDTO;
+import de.budisantoso.wcd.wh.exception.WorkingEventNotFoundException;
+import de.budisantoso.wcd.wh.persistence.WorkingEventService;
 
 @RestController
-@RequestMapping("/wh/account")
-public class AccountController {
+@RequestMapping("/wh/workingevent")
+public class WorkingEventController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkingEventController.class);
 
 	@Autowired
-	private AccountService service;
+	private WorkingEventService service;
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public AccountDTO create(@RequestBody @Valid AccountDTO accountEntry) {
-		return service.create(accountEntry);
+	public WorkingEventDTO create(@RequestBody @Valid WorkingEventDTO workingEventEntry) {
+		return service.create(workingEventEntry);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-	public AccountDTO delete(@PathVariable("id") String id) {
+	public WorkingEventDTO delete(@PathVariable("id") String id) {
 		return service.delete(id);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
-	public AccountDTO findById(@PathVariable("id") String id) {
+	public WorkingEventDTO findById(@PathVariable("id") String id) {
 		return service.findById(id);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public AccountDTO findByUsername(@RequestParam(value = "username") String username) {
+	public List<WorkingEventDTO> findByClub(@RequestParam(value = "clubId") String clubId) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Find account with username '{}'.", username);
+			LOGGER.debug("Find WorkingEvent with clubId '{}'.", clubId);
 		}
-		return service.findByUsername(username);
+		return service.findByClubId(clubId);
 	}
 
 	@RequestMapping(value = "{id}", method = RequestMethod.PUT)
-	public AccountDTO update(@PathVariable("id") String id, @RequestBody @Valid AccountDTO accountEntry) {
-		return service.update(id, accountEntry);
+	public WorkingEventDTO update(@PathVariable("id") String id, @RequestBody @Valid WorkingEventDTO workingEventEntry) {
+		return service.update(id, workingEventEntry);
 	}
 
 	@RequestMapping(value = "list", method = RequestMethod.GET)
-	public List<AccountDTO> findAll() {
+	public List<WorkingEventDTO> findAll() {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Find all accounts.");
+			LOGGER.debug("Find all WorkingEvents.");
 		}
 		return service.findAll();
 	}
@@ -70,7 +70,7 @@ public class AccountController {
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@SuppressWarnings("PMD")
-	public void handleAccountNotFound(AccountNotFoundException ex) {
+	public void handleWorkingEventNotFound(WorkingEventNotFoundException ex) {
 	}
 
 }

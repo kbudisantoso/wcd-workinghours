@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import de.budisantoso.wcd.wh.dto.AccountDTO;
 import de.budisantoso.wcd.wh.exception.AccountNotFoundException;
-import de.budisantoso.wcd.wh.exception.PersonNotFoundException;
 import de.budisantoso.wcd.wh.persistence.AccountService;
 import de.budisantoso.wcd.wh.persistence.model.Account;
 import de.budisantoso.wcd.wh.persistence.model.Person;
@@ -25,15 +24,7 @@ public class AccountMongoDBService implements AccountService {
 
 	@Override
 	public AccountDTO create(AccountDTO accountEntry) {
-		Person person;
-		try {
-			person = personService.findPersonByName(accountEntry.getName());
-		} catch (PersonNotFoundException e) {
-			person = personService.createPerson(accountEntry.getPerson());
-		}
-
-		return convertToDTO(repository.save(new Account(accountEntry.getUsername(), accountEntry.getPassword())
-				.assignPerson(person)));
+		return convertToDTO(repository.save(new Account(accountEntry)));
 	}
 
 	@Override
@@ -86,9 +77,9 @@ public class AccountMongoDBService implements AccountService {
 	}
 
 	@Override
-	public AccountDTO updatePassword(String id, String password) {
+	public AccountDTO update(String id, AccountDTO account) {
 		Account updated = findAccountById(id);
-		updated.updatePassword(password);
+		updated.update(account.getUsername(), account.getPassword(), new Person(account.getPerson()));
 		updated = repository.save(updated);
 		return convertToDTO(updated);
 	}

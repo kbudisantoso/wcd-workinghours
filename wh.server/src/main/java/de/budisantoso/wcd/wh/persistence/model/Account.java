@@ -4,9 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import de.budisantoso.wcd.wh.dto.AccountDTO;
 import de.budisantoso.wcd.wh.util.ModelConstants;
 import de.budisantoso.wcd.wh.util.PasswordHashUtil;
 import de.budisantoso.wcd.wh.util.PreCondition;
@@ -20,6 +22,7 @@ public class Account {
 	@Id
 	private String id;
 
+	@Indexed(unique = true)
 	private String username;
 
 	private String passwordHash;
@@ -36,15 +39,23 @@ public class Account {
 		}
 	}
 
-	public Account(String username, String password) {
-		checkUsernameAndPassword(username, password);
+	public Account(String username, String password, Person person) {
+		checkUsername(username);
+		checkPassword(password);
+		checkPerson(person);
 
 		this.username = username;
 		this.passwordHash = PASSWORD_UTIL.createHash(password);
+		this.person = person;
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Created Account with name='{}' and password=xxxxxxxx.", username);
 		}
+	}
+
+	public Account(AccountDTO accountEntry) {
+		this(accountEntry.getUsername(), accountEntry.getPassword(), new Person(accountEntry.getPerson()));
+		this.id = accountEntry.getId();
 	}
 
 	public String getId() {
@@ -63,16 +74,15 @@ public class Account {
 		return PASSWORD_UTIL.validatePassword(password, passwordHash);
 	}
 
-	public Account updatePassword(String password) {
+	public Account update(String username, String password, Person person) {
+		checkUsername(username);
 		checkPassword(password);
-		this.passwordHash = PASSWORD_UTIL.createHash(password);
-
-		return this;
-	}
-
-	public Account assignPerson(Person person) {
 		checkPerson(person);
+
+		this.username = username;
+		this.passwordHash = PASSWORD_UTIL.createHash(password);
 		this.person = person;
+
 		return this;
 	}
 
@@ -83,18 +93,16 @@ public class Account {
 						"Person cannot be unmanaged. Person has no Id which indicates that it is not persisted yet; persist Person first.");
 	}
 
-	private void checkUsernameAndPassword(String username, String password) {
-		PreCondition.notNull(username, "Name cannot be null!");
-		PreCondition.notEmpty(username, "Name cannot be empty!");
+	private void checkUsername(String username) {
+		PreCondition.notNull(username, "Username cannot be null!");
+		PreCondition.notEmpty(username, "Username cannot be empty!");
 		PreCondition.isTrue(username.length() <= ModelConstants.ACCOUNT_USERNAME_MAX_LENGTH,
 				"Username cannot be longer than %d characters.", ModelConstants.ACCOUNT_USERNAME_MAX_LENGTH);
-
-		checkPassword(password);
 	}
 
 	private void checkPassword(String password) {
-		PreCondition.notNull(password, "Name cannot be null!");
-		PreCondition.notEmpty(password, "Name cannot be empty!");
+		PreCondition.notNull(password, "Password cannot be null!");
+		PreCondition.notEmpty(password, "Password cannot be empty!");
 		PreCondition.isTrue(password.length() >= ModelConstants.ACCOUNT_PASSWORD_MIN_LENGTH,
 				"Password must have at least %d characters.", ModelConstants.ACCOUNT_PASSWORD_MIN_LENGTH);
 		PreCondition.isTrue(password.length() <= ModelConstants.ACCOUNT_PASSWORD_MAX_LENGTH,
@@ -107,7 +115,7 @@ public class Account {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -120,10 +128,10 @@ public class Account {
 		if (getClass() != obj.getClass())
 			return false;
 		Account other = (Account) obj;
-		if (username == null) {
-			if (other.username != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!username.equals(other.username))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
